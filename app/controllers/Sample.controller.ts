@@ -10,7 +10,7 @@ export class SampleController {
     }
 
     public static async Find(req: express.Request, res: express.Response) {
-        const id: number = req.params.id;
+        const id: number = Number(req.params.id);
         const sample = await SampleService.FindOneById(id);
         return sample ? res.status(200).send(sample) : res.status(404).send({text: "NOT FOUND"});
     }
