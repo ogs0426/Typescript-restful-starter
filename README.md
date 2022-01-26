@@ -70,3 +70,13 @@ When execute any of this commands the app start with clustering, creating many c
 	npm test
 ### Production: Run app in production environment
 	npm start
+
+
+
+
+
+
+### Refs
+
+https://github.com/ckdqja135/Typescript-restful-starter
+https://codesk.tistory.com/entry/%EB%B0%94%EB%AF%B8-Typescript-restful-starter-%EC%BD%94%EB%93%9C-%EB%B6%84%EC%84%9D%ED%95%B4%EB%B3%B4%EA%B8%B0
