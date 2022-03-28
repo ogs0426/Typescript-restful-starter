@@ -4,9 +4,9 @@ export const DIALECT = "mysql";
 
 const LOCAL_CONFIGURATION = {
 	DB: "test",
-	PASSWORD: "",
+	PASSWORD: "1234",
 	PORT_DB: 3306,
-	SERVER: "127.0.0.1",
+	SERVER: "localhost",
 	USER_DB: "root",
 };
 
