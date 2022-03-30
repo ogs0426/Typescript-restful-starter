@@ -6,30 +6,41 @@ import * as methodOverride from "method-override";
 import * as morgan from "morgan";
 import { Connection } from "./Database";
 import { ROUTER } from "./Router";
+import { WebSocket } from "./WebSocket";
 
 export class Server {
     private static ConnectDB(): Promise<any> {
         return Connection;
     }
-
+    
     private readonly app: express.Application;
     private readonly server: http.Server;
+    //private readonly wss: WebSocket;
 
     constructor() {
         this.app = express();
         this.server = http.createServer(this.app);
+        //this.wss = new WebSocket(this.server);
     }
 
     public Start(): Promise<http.Server> {
+        
+        console.log(`${process.pid} : Http Server Start`);
+
         return Server.ConnectDB().then(() => {
             this.ExpressConfiguration();
             this.ConfigurationRouter();
+            this.OnEvent();
             return this.server;
         });
     }
-
+    
     public App(): express.Application {
         return this.app;
+    }
+
+    public Http(): http.Server {
+        return this.server;
     }
 
     private ExpressConfiguration(): void {
@@ -60,6 +71,7 @@ export class Server {
             this.app.use(route.path, route.middleware, route.handler);
         }
 
+        // Router_Next Not found 404
         this.app.use((req: express.Request, res: express.Response, next: express.NextFunction): void => {
             res.status(404);
             res.json({
@@ -68,15 +80,18 @@ export class Server {
             next();
         });
 
+        // Router_Err_Next Unauthorized 401
         this.app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction): void => {
             if (err.name === "UnauthorizedError") {
                 res.status(401).json({
                     error: "Please send a valid Token...",
                 });
             }
+
             next();
         });
 
+        // Router_Err_Next Server Unknow 500
         this.app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction): void => {
             res.status(err.status || 500);
             res.json({
@@ -85,4 +100,34 @@ export class Server {
             next();
         });
     }
+
+    private OnEvent(): void {
+
+        this.server.on("error", (error: any) => {
+            if (error.syscall !== "listen") {
+                console.log("syscall listen" + error);
+                throw error;
+            }
+
+            switch (error.code) {
+                case "EACCES":           // user permission
+                    console.error("Port requires elevated privileges");
+                    process.exit(1);
+                    break;
+
+                case "EADDRINUSE":       // used port session
+                    console.error("Port is already in use");
+                    process.exit(1);
+                    break;
+                default:
+                    throw error;
+            }
+        });
+
+        this.server.on("listening", () => {
+            console.log("http listen start");
+        });
+    }
+
+
 }

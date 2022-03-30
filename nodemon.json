@@ -2,7 +2,7 @@
   "watch": ["**/*.ts"],
   "ext": "ts",
   "ignore": ["./test/*.ts"],
-  "exec": "node -r ts-node/register Index.ts",
+  "exec": "node -r ts-node/register -r dotenv/config Index.ts",
   "env": {
     "NODE_ENV": "development"
   }
